@@ -1,11 +1,23 @@
-﻿namespace InventoryManagement.Model
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace InventoryManagement.Model
 {
     internal class Product
     {
-        public string Id { get; set; }
-        public string Name { get; set; } 
-        public string Color { get; set; }
-        public string Category { get; set; }
-        public string Size { get; set; }
+        [JsonPropertyName("id")]
+        public string Id { get; set; } = string.Empty;
+
+        [JsonPropertyName("size")]
+        public JsonElement Size { get; set; }
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = string.Empty;
+
+        [JsonPropertyName("color")]
+        public string? Color { get; set; }
+
+        [JsonPropertyName("category")]
+        public string? Category { get; set; }
     }
 }

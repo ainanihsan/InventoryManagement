@@ -1,4 +1,5 @@
 ﻿using InventoryManagement.Model;
+using System.Text.Json;
 
 namespace InventoryManagement.Source
 {
@@ -8,24 +9,65 @@ namespace InventoryManagement.Source
     /// </summary>
     internal class DiskInventorySource : IInventorySource
     {
-        public Product? Get(string id)
+        private readonly string _filePath;
+
+        public DiskInventorySource(string filePath)
         {
-            throw new NotImplementedException();
+            _filePath = filePath;
+        }
+
+        private List<Product> ReadAllFromFile()
+        {
+            if (!File.Exists(_filePath))
+                return new List<Product>();
+
+            var text = File.ReadAllText(_filePath);
+
+            if (string.IsNullOrWhiteSpace(text))
+                return new List<Product>();
+
+            return JsonSerializer.Deserialize<List<Product>>(text)
+                   ?? new List<Product>();
+        }
+
+        private void WriteAllToFile(List<Product> products)
+        {
+            var json = JsonSerializer.Serialize(
+                products,
+                new JsonSerializerOptions { WriteIndented = true }
+            );
+
+            File.WriteAllText(_filePath, json);
         }
 
         public List<Product> GetAll()
         {
-            throw new NotImplementedException();
+            return ReadAllFromFile();
+        }
+
+        public Product? Get(string id)
+        {
+            return ReadAllFromFile().FirstOrDefault(p => p.Id == id);
         }
 
         public void Add(Product product)
         {
-            throw new NotImplementedException();
+            var all = ReadAllFromFile();
+            all.Add(product);
+            WriteAllToFile(all);
         }
 
         public bool Update(Product product)
         {
-            throw new NotImplementedException();
+            var all = ReadAllFromFile();
+            var index = all.FindIndex(p => p.Id == product.Id);
+
+            if (index < 0)
+                return false;
+
+            all[index] = product;
+            WriteAllToFile(all);
+            return true;
         }
     }
 }
