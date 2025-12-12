@@ -14,27 +14,29 @@ namespace InventoryManagement.Service
 
         public List<Product> GetAllProducts()
         {
-            throw new NotImplementedException();
+            return _inventorySource.GetAll();
         }
 
         public void AddProduct(Product product)
         {
-            throw new NotImplementedException();
+            _inventorySource.Add(product);
         }
 
         public List<Product> SearchProducts(string searchString, Func<string, Product, bool> searchCallback)
         {
-            throw new NotImplementedException();
+            return _inventorySource.GetAll()
+                .Where(p => searchCallback(searchString, p))
+                .ToList();
         }
 
         public Product? GetProduct(string id)
         {
-            throw new NotImplementedException();
+            return _inventorySource.Get(id);
         }
 
         public bool UpdateProduct(Product product)
         {
-            throw new NotImplementedException();
+            return _inventorySource.Update(product);
         }
     }
 }
