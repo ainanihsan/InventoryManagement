@@ -18,26 +18,37 @@ namespace InventoryManagement.Source
 
         private List<Product> ReadAllFromFile()
         {
-            if (!File.Exists(_filePath))
-                return new List<Product>();
+            try
+            {
+                if (!File.Exists(_filePath))
+                    return new List<Product>();
 
-            var text = File.ReadAllText(_filePath);
+                var text = File.ReadAllText(_filePath);
 
-            if (string.IsNullOrWhiteSpace(text))
-                return new List<Product>();
+                if (string.IsNullOrWhiteSpace(text))
+                    return new List<Product>();
 
-            return JsonSerializer.Deserialize<List<Product>>(text)
-                   ?? new List<Product>();
+                return JsonSerializer.Deserialize<List<Product>>(text) ?? new List<Product>();
+            }
+            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException || ex is JsonException)
+            {
+                // Log or handle as appropriate
+                throw new InvalidOperationException("Failed to read or parse products from disk.", ex);
+            }
         }
 
         private void WriteAllToFile(List<Product> products)
         {
-            var json = JsonSerializer.Serialize(
-                products,
-                new JsonSerializerOptions { WriteIndented = true }
-            );
-
-            File.WriteAllText(_filePath, json);
+            try
+            {
+                var json = JsonSerializer.Serialize(products, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(_filePath, json);
+            }
+            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException || ex is JsonException)
+            {
+                // Log or handle as appropriate
+                throw new InvalidOperationException("Failed to write products to disk.", ex);
+            }
         }
 
         public List<Product> GetAll()

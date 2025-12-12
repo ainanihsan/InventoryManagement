@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static InventoryManagement.Test.TestUtils;
+
 
 namespace InventoryManagement.Test
 {
@@ -54,11 +56,6 @@ namespace InventoryManagement.Test
                 Assert.That(results[0].Id, Is.EqualTo("1"));           
 
         }
-
-        private static JsonElement MakeJsonElement(string json)
-        {
-            using var doc = JsonDocument.Parse(json);
-            return doc.RootElement.Clone(); // clone so element outlives document
-        }
+        
     }
 }

@@ -4,6 +4,7 @@ using InventoryManagement.Source;
 using NSubstitute;
 using NUnit.Framework;
 using System.Text.Json;
+using static InventoryManagement.Test.TestUtils;
 
 namespace InventoryManagement.Test
 {
@@ -68,11 +69,7 @@ namespace InventoryManagement.Test
             Assert.That(reloaded.Size.GetInt32(), Is.EqualTo(37));
         }
 
-        private static JsonElement MakeJsonElement(string json)
-        {
-            using var doc = JsonDocument.Parse(json);
-            return doc.RootElement.Clone(); // clone so element outlives document
-        }
+        
 
         [Test]
         public void Add_And_Get_WithObjectSize()
