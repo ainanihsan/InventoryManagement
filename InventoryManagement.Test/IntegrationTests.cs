@@ -19,7 +19,8 @@ namespace InventoryManagement.Test
         public void SearchProducts_FiltersCorrectly()
         {
             var path = Path.GetTempFileName();
-
+            try
+            {
                 var source = new DiskInventorySource(path);
 
                 // add two products
@@ -53,8 +54,12 @@ namespace InventoryManagement.Test
                 );
 
                 Assert.That(results.Count, Is.EqualTo(1));
-                Assert.That(results[0].Id, Is.EqualTo("1"));           
-
+                Assert.That(results[0].Id, Is.EqualTo("1"));
+            }
+            finally
+            {
+                File.Delete(path);
+            }
         }
         
     }

@@ -15,58 +15,73 @@ namespace InventoryManagement.Test
         public void Add_Then_GetAll_ReturnsProduct()
         {
             var path = Path.GetTempFileName();
-            var source = new DiskInventorySource(path);
-
-            var product = new Product
+            try
             {
-                Id = "100",
-                Name = "Slim fit jeans",
-                Category = "Jeans",
-                Size = MakeJsonElement("36"),
-                Color = "Blue"
-            };
-            source.Add(product);
 
-            var all = source.GetAll();
+                var source = new DiskInventorySource(path);
 
-            Assert.That(all.Count, Is.EqualTo(1));
-            Assert.That(all[0].Id, Is.EqualTo("100"));
+                var product = new Product
+                {
+                    Id = "100",
+                    Name = "Slim fit jeans",
+                    Category = "Jeans",
+                    Size = MakeJsonElement("36"),
+                    Color = "Blue"
+                };
+                source.Add(product);
+
+                var all = source.GetAll();
+
+                Assert.That(all.Count, Is.EqualTo(1));
+                Assert.That(all[0].Id, Is.EqualTo("100"));
+            }
+            finally
+            {
+                File.Delete(path);
+            }
         }
 
         [Test]
         public void Update_ModifiesExistingProduct()
         {
             var path = Path.GetTempFileName();
-            var source = new DiskInventorySource(path);
-
-            var product = new Product 
-            { 
-                Id = "200",
-                Name = "Old",
-                Category = "Old Category",
-                Color = "Old Color",
-                Size = MakeJsonElement("36")
-            };
-            source.Add(product);
-
-            var updated = new Product
+            try
             {
-                Id = "200",
-                Name = "New",
-                Category = "New Category",
-                Color = "New Color",
-                Size = MakeJsonElement("37")
-            };
-            var success = source.Update(updated);
+                var source = new DiskInventorySource(path);
 
-            var reloaded = source.Get("200");
+                var product = new Product
+                {
+                    Id = "200",
+                    Name = "Old",
+                    Category = "Old Category",
+                    Color = "Old Color",
+                    Size = MakeJsonElement("36")
+                };
+                source.Add(product);
 
-            Assert.That(success, Is.True);
-            Assert.That(reloaded!.Name, Is.EqualTo("New"));
-            Assert.That(reloaded!.Category, Is.EqualTo("New Category"));
-            Assert.That(reloaded!.Color, Is.EqualTo("New Color"));
-            Assert.That(reloaded.Size.ValueKind, Is.EqualTo(JsonValueKind.Number));
-            Assert.That(reloaded.Size.GetInt32(), Is.EqualTo(37));
+                var updated = new Product
+                {
+                    Id = "200",
+                    Name = "New",
+                    Category = "New Category",
+                    Color = "New Color",
+                    Size = MakeJsonElement("37")
+                };
+                var success = source.Update(updated);
+
+                var reloaded = source.Get("200");
+
+                Assert.That(success, Is.True);
+                Assert.That(reloaded!.Name, Is.EqualTo("New"));
+                Assert.That(reloaded!.Category, Is.EqualTo("New Category"));
+                Assert.That(reloaded!.Color, Is.EqualTo("New Color"));
+                Assert.That(reloaded.Size.ValueKind, Is.EqualTo(JsonValueKind.Number));
+                Assert.That(reloaded.Size.GetInt32(), Is.EqualTo(37));
+            }
+            finally
+            {
+                File.Delete(path);
+            }
         }
 
         
